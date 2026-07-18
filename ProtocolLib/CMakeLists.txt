@@ -6,17 +6,17 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED On)
 
 # Library
-file(GLOB HDR_FILES "include/*.hpp"
-                    "include/request/*.hpp"
-                    "include/response/*.hpp"
-                    "include/encryption/*.hpp"
-                    "include/serialization/*.hpp"
-                    "include/deserialization/*.hpp")
+file(GLOB HDR_FILES "include/protocol/*.hpp"
+                    "include/protocol/request/*.hpp"
+                    "include/protocol/response/*.hpp"
+                    "include/protocol/encryption/*.hpp"
+                    "include/protocol/serialization/*.hpp"
+                    "include/protocol/deserialization/*.hpp")
 
-file(GLOB SRC_FILES "src/*.cpp")
+file(GLOB SRC_FILES "src/*.cpp")    
 
 add_library(${PROJECT_NAME} STATIC ${HDR_FILES} ${SRC_FILES})
-target_include_directories(${PROJECT_NAME} PRIVATE "include")
+target_include_directories(${PROJECT_NAME} PUBLIC "include")
 
 find_package(OpenSSL CONFIG REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
@@ -44,9 +44,7 @@ find_package(GTest REQUIRED)
 
 add_executable(${PROJECT_NAME}Tests ${TEST_SRC_FILES})
 target_link_libraries(${PROJECT_NAME}Tests PRIVATE GTest::gtest GTest::gtest_main GTest::gmock
-                                                   GTest::gmock_main ${PROJECT_NAME} OpenSSL::SSL
-                                                   OpenSSL::Crypto)
-target_include_directories(${PROJECT_NAME}Tests PRIVATE "include")
+                                                   GTest::gmock_main ${PROJECT_NAME})
 
 add_test(NAME AllTestsIn${PROJECT_NAME} COMMAND ${PROJECT_NAME}Tests)
 

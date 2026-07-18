@@ -1,9 +1,7 @@
-#include "response/response.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+protocol::response::Response::Response(ResponseType type) : type_(type) {}
 
-Response::Response(response::ResponseType type) : type_(type) {}
-
-response::ResponseType protocol::Response::getType() const {
+protocol::response::ResponseType protocol::response::Response::getType() const {
     return type_;
 }

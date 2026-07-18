@@ -1,19 +1,21 @@
-#include "deserialization/utils.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
-using namespace protocol::utils;
+using protocol::request::RequestType;
+using protocol::response::ResponseType;
+using protocol::serialization::utils::serialize_data_t;
 
-request::RequestType
-protocol::utils::deserializeRequestType(const serialize_data_t& data) {
-    return request::RequestType(data.front());
+RequestType
+protocol::deserialization::utils::deserializeRequestType(const serialize_data_t& data) {
+    return RequestType(data.front());
 }
 
-response::ResponseType
-protocol::utils::deserializeResponseType(const serialize_data_t& data) {
-    return response::ResponseType(data.front());
+ResponseType
+protocol::deserialization::utils::deserializeResponseType(const serialize_data_t& data) {
+    return ResponseType(data.front());
 }
 
-std::uint64_t protocol::utils::deserializateNumber(const serialize_data_t& data) {
+std::uint64_t
+protocol::deserialization::utils::deserializateNumber(const serialize_data_t& data) {
     std::uint64_t number = 0;
 
     for (int i = 0; i < 8; ++i) {
@@ -23,6 +25,7 @@ std::uint64_t protocol::utils::deserializateNumber(const serialize_data_t& data)
     return number;
 }
 
-std::string protocol::utils::deserializateStr(const serialize_data_t& data) {
+std::string
+protocol::deserialization::utils::deserializateStr(const serialize_data_t& data) {
     return std::string(data.begin(), data.end());
 }

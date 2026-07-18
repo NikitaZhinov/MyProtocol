@@ -1,0 +1,3 @@
+PROJECT_NAME = "Server"
+OUTPUT_DIRECTORY = "docs"
+INPUT = include

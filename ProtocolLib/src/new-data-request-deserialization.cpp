@@ -1,28 +1,23 @@
-#include "deserialization/new-data-request-deserialization.hpp"
-
-#include "deserialization/utils.hpp"
-#include "request/new-data-request-factory.hpp"
+#include "protocol/protocol.hpp"
 
 #include <stdexcept>
 
-using namespace protocol;
+using protocol::serialization::utils::serialize_data_t;
 
-NewDataRequestDeserialization::NewDataRequestDeserialization() :
+protocol::deserialization::NewDataRequestDeserialization::
+    NewDataRequestDeserialization() :
     RequestDeserialization(request::RequestType::NewData) {}
 
-RequestFactory::request_ptr
-NewDataRequestDeserialization::deserialize(const utils::serialize_data_t& data) {
-    if (utils::deserializeResponseType(data) != getDeserializationType()) {
-        throw std::logic_error("cannot deserializate");
-    }
-
-    utils::serialize_data_t serialized_number(data.begin() + 1, data.begin() + 9);
-    utils::serialize_data_t serialized_data(data.begin() + 9, data.end());
+protocol::request::RequestFactory::request_ptr
+protocol::deserialization::NewDataRequestDeserialization::deserialize_(
+    const serialize_data_t& data) const {
+    serialize_data_t serialized_number(data.begin(), data.begin() + 8);
+    serialize_data_t serialized_data(data.begin() + 8, data.end());
 
     auto number = utils::deserializateNumber(serialized_number);
     auto d_data = utils::deserializateStr(serialized_data);
 
-    NewDataRequestFactory factory;
+    request::NewDataRequestFactory factory;
 
     return factory.create(number, d_data);
 }

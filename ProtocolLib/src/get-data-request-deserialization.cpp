@@ -1,23 +1,17 @@
-#include "deserialization/get-data-request-deserialization.hpp"
-
-#include "deserialization/utils.hpp"
-#include "request/get-data-request-factory.hpp"
+#include "protocol/protocol.hpp"
 
 #include <stdexcept>
 
-using namespace protocol;
+using protocol::serialization::utils::serialize_data_t;
 
-GetDataRequestDeserialization::GetDataRequestDeserialization() :
+protocol::deserialization::GetDataRequestDeserialization::
+    GetDataRequestDeserialization() :
     RequestDeserialization(request::RequestType::GetData) {}
 
-RequestFactory::request_ptr
-GetDataRequestDeserialization::deserialize(const utils::serialize_data_t& data) {
-    GetDataRequestFactory factory;
-
-    if (utils::deserializeResponseType(data) != getDeserializationType()) {
-        throw std::logic_error("cannot deserializate");
-    }
-
-    return factory.create(utils::deserializateNumber(
-        utils::serialize_data_t(data.begin() + 1, data.end())));
+protocol::request::RequestFactory::request_ptr
+protocol::deserialization::GetDataRequestDeserialization::deserialize_(
+    const serialize_data_t& data) const {
+    request::GetDataRequestFactory factory;
+    return factory.create(
+        utils::deserializateNumber(serialize_data_t(data.begin(), data.end())));
 }

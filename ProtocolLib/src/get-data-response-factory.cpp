@@ -1,10 +1,9 @@
-#include "response/get-data-response-factory.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+protocol::response::GetDataResponseFactory::GetDataResponseFactory() :
+    ResponseFactory(ResponseType::GetData) {}
 
-GetDataResponseFactory::GetDataResponseFactory() :
-    ResponseFactory(response::ResponseType::GetData) {}
-
-ResponseFactory::response_ptr GetDataResponseFactory::create() {
+protocol::response::ResponseFactory::response_ptr
+protocol::response::GetDataResponseFactory::create() const {
     return std::make_shared<GetDataResponse>();
 }

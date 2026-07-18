@@ -1,22 +1,15 @@
-#include "serialization/get-data-response-serialization.hpp"
-
-#include "response/get-data-response.hpp"
-#include "serialization/utils.hpp"
+#include "protocol/protocol.hpp"
 
 #include <stdexcept>
 
-using namespace protocol;
+using protocol::serialization::utils::serialize_data_t;
 
-GetDataResponseSerialization::GetDataResponseSerialization() :
+protocol::serialization::GetDataResponseSerialization::GetDataResponseSerialization() :
     ResponseSerialization(response::ResponseType::GetData) {}
 
-utils::serialize_data_t
-GetDataResponseSerialization::serialize(ResponseFactory::response_ptr msg) {
-    if (msg->getType() != getSerializationType()) {
-        throw std::logic_error("cannot serialize");
-    }
-
-    auto message_ptr = std::static_pointer_cast<GetDataResponse>(msg);
+serialize_data_t protocol::serialization::GetDataResponseSerialization::serialize_(
+    response::ResponseFactory::response_ptr response) const {
+    auto message_ptr = std::static_pointer_cast<response::GetDataResponse>(response);
 
     auto& message = *message_ptr;
 

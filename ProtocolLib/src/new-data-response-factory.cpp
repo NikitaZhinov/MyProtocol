@@ -1,10 +1,9 @@
-#include "response/new-data-response-factory.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+protocol::response::NewDataResponseFactory::NewDataResponseFactory() :
+    ResponseFactory(ResponseType::NewData) {}
 
-NewDataResponseFactory::NewDataResponseFactory() :
-    ResponseFactory(response::ResponseType::NewData) {}
-
-ResponseFactory::response_ptr NewDataResponseFactory::create() {
+protocol::response::ResponseFactory::response_ptr
+protocol::response::NewDataResponseFactory::create() const {
     return std::make_shared<NewDataResponse>();
 }

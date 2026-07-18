@@ -1,12 +1,9 @@
-#include "request/new-data-request-factory.hpp"
+#include "protocol/protocol.hpp"
 
-#include "request/new-data-request.hpp"
-
-using namespace protocol;
-
-NewDataRequestFactory::NewDataRequestFactory() :
+protocol::request::NewDataRequestFactory::NewDataRequestFactory() :
     RequestFactory(request::RequestType::NewData) {}
 
-NewDataRequestFactory::request_ptr NewDataRequestFactory::create() {
+protocol::request::NewDataRequestFactory::request_ptr
+protocol::request::NewDataRequestFactory::create() const {
     return std::make_shared<NewDataRequest>();
 }

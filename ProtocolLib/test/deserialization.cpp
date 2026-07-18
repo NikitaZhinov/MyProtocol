@@ -1,67 +1,55 @@
-#include "deserialization/new-data-request-deserialization.hpp"
-#include "deserialization/new-data-response-deserialization.hpp"
-#include "deserialization/get-data-request-deserialization.hpp"
-#include "deserialization/get-data-response-deserialization.hpp"
-
-#include "request/new-data-request.hpp"
-#include "request/new-data-request-factory.hpp"
-#include "request/get-data-request.hpp"
-#include "request/get-data-request-factory.hpp"
-#include "response/new-data-response.hpp"
-#include "response/new-data-response-factory.hpp"
-#include "response/get-data-response.hpp"
-#include "response/get-data-response-factory.hpp"
+#include "protocol/protocol.hpp"
 
 #include <gtest/gtest.h>
 
 using namespace protocol;
 
 TEST(DeserializationTest, NewDataRequestTest) {
-    std::vector<std::uint8_t> message { 0,   0,   0,   0,   0,   0,   0,   0,
+    std::vector<std::uint8_t> message { 1,   0,   0,   0,   0,   0,   0,   0,
                                         10,  'H', 'e', 'l', 'l', 'o', ',', ' ',
                                         'W', 'o', 'r', 'l', 'd', '!' };
 
-    NewDataRequestDeserialization deserializer;
+    deserialization::NewDataRequestDeserialization deserializer;
 
-    auto d_msg =
-        std::static_pointer_cast<NewDataRequest>(deserializer.deserialize(message));
+    auto d_msg = std::static_pointer_cast<request::NewDataRequest>(
+        deserializer.deserialize(message));
 
     ASSERT_EQ(d_msg->getUserId(), 10);
     ASSERT_EQ(d_msg->getData(), "Hello, World!");
 }
 
 TEST(DeserializationTest, GetDataRequestTest) {
-    std::vector<std::uint8_t> message { 1, 0, 0, 0, 0, 0, 0, 0, 10 };
+    std::vector<std::uint8_t> message { 2, 0, 0, 0, 0, 0, 0, 0, 10 };
 
-    GetDataRequestDeserialization deserializer;
+    deserialization::GetDataRequestDeserialization deserializer;
 
-    auto d_msg =
-        std::static_pointer_cast<GetDataRequest>(deserializer.deserialize(message));
+    auto d_msg = std::static_pointer_cast<request::GetDataRequest>(
+        deserializer.deserialize(message));
 
     ASSERT_EQ(d_msg->getUserId(), 10);
 }
 
 TEST(DeserializationTest, NewDataResponseTest) {
-    std::vector<std::uint8_t> message { 0, 0, 0, 0, 0, 0, 0, 0, 123 };
+    std::vector<std::uint8_t> message { 1, 0, 0, 0, 0, 0, 0, 0, 123 };
 
-    NewDataResponseDeserialization deserializer;
+    deserialization::NewDataResponseDeserialization deserializer;
 
-    auto d_msg =
-        std::static_pointer_cast<NewDataResponse>(deserializer.deserialize(message));
+    auto d_msg = std::static_pointer_cast<response::NewDataResponse>(
+        deserializer.deserialize(message));
 
     ASSERT_EQ(d_msg->getDataId(), 123);
 }
 
 TEST(DeserializationTest, GetDataResponseTest) {
-    std::vector<std::uint8_t> message { 1,    0,   0,   0,   0,   0,   0,   0,   2,   0,
+    std::vector<std::uint8_t> message { 2,    0,   0,   0,   0,   0,   0,   0,   2,   0,
                                         0,    0,   0,   0,   0,   0,   0,   0,   0,   0,
                                         0,    0,   0,   0,   1,   'H', 'e', 'l', 'l', 'o',
                                         '\0', 'W', 'o', 'r', 'l', 'd', '\0' };
 
-    GetDataResponseDeserialization deserializer;
+    deserialization::GetDataResponseDeserialization deserializer;
 
-    auto d_msg =
-        std::static_pointer_cast<GetDataResponse>(deserializer.deserialize(message));
+    auto d_msg = std::static_pointer_cast<response::GetDataResponse>(
+        deserializer.deserialize(message));
 
     std::vector<std::uint64_t> expected_ids { 0, 1 };
     std::vector<std::string> expected_data { "Hello", "World" };
@@ -69,4 +57,32 @@ TEST(DeserializationTest, GetDataResponseTest) {
     ASSERT_EQ(d_msg->getAmountData(), 2);
     ASSERT_EQ(d_msg->getDataIds(), expected_ids);
     ASSERT_EQ(d_msg->getData(), expected_data);
+}
+
+TEST(DeserializationTest, TakeKeyRequestTest) {
+    std::vector<std::uint8_t> message { 0 };
+
+    auto key = encryption::aes::generateKey();
+    message.append_range(key);
+
+    deserialization::TakeKeyRequestDeserialization deserializer;
+
+    auto d_msg = std::static_pointer_cast<request::TakeKeyRequest>(
+        deserializer.deserialize(message));
+
+    ASSERT_EQ(d_msg->getSecretKey(), key);
+}
+
+TEST(DeserializationTest, ConnectResponseTest) {
+    std::vector<std::uint8_t> message { 0 };
+
+    auto key = encryption::rsa::generatePairKey();
+    message.append_range(key.public_key);
+
+    deserialization::ConnectResponseDeserialization deserializer;
+
+    auto d_msg = std::static_pointer_cast<response::ConnectResponse>(
+        deserializer.deserialize(message));
+
+    ASSERT_EQ(d_msg->getPublicKey(), key.public_key);
 }

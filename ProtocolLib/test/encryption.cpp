@@ -1,48 +1,42 @@
-#include "encryption/encryption.hpp"
+#include "protocol/protocol.hpp"
 
 #include <gtest/gtest.h>
-#include <print>
 
-using namespace protocol;
+using namespace protocol::encryption;
 
-TEST(EncryptionTest, EncryptTest) {
+TEST(EncryptionTest, AESTest) {
     std::string msg = "Hello, World!";
-    std::string key = "1234567890123456";
 
     std::vector<std::uint8_t> v_msg(msg.begin(), msg.end());
-    std::vector<std::uint8_t> v_key(key.begin(), key.end());
+    std::vector<std::uint8_t> key = aes::generateKey();
 
-    ASSERT_EQ(msg.size(), v_msg.size());
-    ASSERT_EQ(key.size(), v_key.size());
+    auto encrypt_data = aes::encrypt(v_msg, key);
 
-    auto encrypt_data = Encryption::encrypt(v_msg, v_key);
+    ASSERT_TRUE(v_msg.size() < encrypt_data.size());
+    ASSERT_TRUE(v_msg != encrypt_data);
 
-    ASSERT_FALSE(encrypt_data.data.empty());
-    ASSERT_FALSE(encrypt_data.iv.empty());
-    ASSERT_FALSE(encrypt_data.tag.empty());
+    auto decrypt_data = aes::decrypt(encrypt_data, key);
 
-    ASSERT_FALSE(v_msg == encrypt_data.data);
+    ASSERT_EQ(v_msg, decrypt_data);
 }
 
-TEST(EncryptionTest, DecryptTest) {
+TEST(EncryptionTest, RSATest) {
     std::string msg = "Hello, World!";
-    std::string key = "1234567890123456";
-
     std::vector<std::uint8_t> v_msg(msg.begin(), msg.end());
-    std::vector<std::uint8_t> v_key(key.begin(), key.end());
 
-    ASSERT_EQ(msg.size(), v_msg.size());
-    ASSERT_EQ(key.size(), v_key.size());
+    auto keypair = rsa::generatePairKey();
 
-    auto encrypt_data = Encryption::encrypt(v_msg, v_key);
+    ASSERT_FALSE(keypair.private_key.empty());
+    ASSERT_FALSE(keypair.public_key.empty());
 
-    ASSERT_FALSE(encrypt_data.data.empty());
-    ASSERT_FALSE(encrypt_data.iv.empty());
-    ASSERT_FALSE(encrypt_data.tag.empty());
+    ASSERT_TRUE(keypair.private_key != keypair.public_key);
 
-    ASSERT_FALSE(v_msg == encrypt_data.data);
+    auto encrypt_data = rsa::encrypt(v_msg, keypair.public_key);
 
-    auto decrypt_data = Encryption::decrypt(encrypt_data, v_key);
+    ASSERT_TRUE(v_msg != encrypt_data);
+
+    auto decrypt_data = rsa::decrypt(encrypt_data, keypair.private_key);
+    decrypt_data.resize(v_msg.size());
 
     ASSERT_EQ(v_msg, decrypt_data);
 }

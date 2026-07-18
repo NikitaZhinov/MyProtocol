@@ -1,16 +1,16 @@
-#include "serialization/utils.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol::utils;
+using protocol::serialization::utils::serialize_data_t;
 
-serialize_data_t protocol::utils::serialize(request::RequestType type) {
+serialize_data_t protocol::serialization::utils::serialize(request::RequestType type) {
     return serialize_data_t { static_cast<std::uint8_t>(type) };
 }
 
-serialize_data_t protocol::utils::serialize(response::ResponseType type) {
+serialize_data_t protocol::serialization::utils::serialize(response::ResponseType type) {
     return serialize_data_t { static_cast<std::uint8_t>(type) };
 }
 
-serialize_data_t protocol::utils::serialize(std::uint64_t number) {
+serialize_data_t protocol::serialization::utils::serialize(std::uint64_t number) {
     serialize_data_t s_number;
 
     for (int i = 7; i >= 0; --i) {
@@ -21,6 +21,6 @@ serialize_data_t protocol::utils::serialize(std::uint64_t number) {
     return s_number;
 }
 
-serialize_data_t protocol::utils::serialize(const std::string& str) {
+serialize_data_t protocol::serialization::utils::serialize(const std::string& str) {
     return serialize_data_t(str.begin(), str.end());
 }

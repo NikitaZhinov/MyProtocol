@@ -1,23 +1,18 @@
-#include "deserialization/new-data-response-deserialization.hpp"
-
-#include "response/new-data-response-factory.hpp"
-#include "deserialization/utils.hpp"
+#include "protocol/protocol.hpp"
 
 #include <stdexcept>
 
-using namespace protocol;
+using protocol::serialization::utils::serialize_data_t;
 
-NewDataResponseDeserialization::NewDataResponseDeserialization() :
+protocol::deserialization::NewDataResponseDeserialization::
+    NewDataResponseDeserialization() :
     ResponseDeserialization(response::ResponseType::NewData) {}
 
-ResponseFactory::response_ptr
-NewDataResponseDeserialization::deserialize(const utils::serialize_data_t& data) {
-    NewDataResponseFactory factory;
+protocol::response::ResponseFactory::response_ptr
+protocol::deserialization::NewDataResponseDeserialization::deserialize_(
+    const serialize_data_t& data) const {
+    response::NewDataResponseFactory factory;
 
-    if (utils::deserializeResponseType(data) != getDeserializationType()) {
-        throw std::logic_error("cannot deserializate");
-    }
-
-    return factory.create(utils::deserializateNumber(
-        utils::serialize_data_t(data.begin() + 1, data.end())));
+    return factory.create(
+        utils::deserializateNumber(serialize_data_t(data.begin(), data.end())));
 }

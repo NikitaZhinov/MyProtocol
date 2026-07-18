@@ -1,10 +1,22 @@
-#include "serialization/response-serialization.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+using protocol::response::ResponseType;
 
-ResponseSerialization::ResponseSerialization(response::ResponseType serialization_type) :
+protocol::serialization::ResponseSerialization::ResponseSerialization(
+    ResponseType serialization_type) :
     serialization_type_(serialization_type) {}
 
-response::ResponseType ResponseSerialization::getSerializationType() const {
+protocol::serialization::utils::serialize_data_t
+protocol::serialization::ResponseSerialization::serialize(
+    response::ResponseFactory::response_ptr response) const {
+    if (response->getType() != getSerializationType()) {
+        throw std::logic_error("cannot serialize");
+    }
+
+    return serialize_(response);
+}
+
+ResponseType
+protocol::serialization::ResponseSerialization::getSerializationType() const {
     return serialization_type_;
 }

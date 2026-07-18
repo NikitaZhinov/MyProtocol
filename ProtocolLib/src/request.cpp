@@ -1,9 +1,7 @@
-#include "request/request.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+protocol::request::Request::Request(RequestType type) : type_(type) {}
 
-Request::Request(request::RequestType type) : type_(type) {}
-
-request::RequestType protocol::Request::getType() const {
+protocol::request::RequestType protocol::request::Request::getType() const {
     return type_;
 }

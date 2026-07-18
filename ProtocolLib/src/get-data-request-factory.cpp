@@ -1,12 +1,9 @@
-#include "request/get-data-request-factory.hpp"
+#include "protocol/protocol.hpp"
 
-#include "request/get-data-request.hpp"
+protocol::request::GetDataRequestFactory::GetDataRequestFactory() :
+    RequestFactory(RequestType::GetData) {}
 
-using namespace protocol;
-
-GetDataRequestFactory::GetDataRequestFactory() :
-    RequestFactory(request::RequestType::GetData) {}
-
-GetDataRequestFactory::request_ptr GetDataRequestFactory::create() {
+protocol::request::GetDataRequestFactory::request_ptr
+protocol::request::GetDataRequestFactory::create() const {
     return std::make_shared<GetDataRequest>();
 }

@@ -1,16 +1,15 @@
-#include "response/get-data-response.hpp"
+#include "protocol/protocol.hpp"
 
-using namespace protocol;
+protocol::response::GetDataResponse::GetDataResponse() :
+    Response(ResponseType::GetData) {}
 
-GetDataResponse::GetDataResponse() : Response(response::ResponseType::GetData) {}
-
-GetDataResponse::GetDataResponse(
+protocol::response::GetDataResponse::GetDataResponse(
     const std::vector<std::pair<std::uint64_t, std::string>>& data) :
     GetDataResponse() {
     setData(data);
 }
 
-void GetDataResponse::setData(
+void protocol::response::GetDataResponse::setData(
     const std::vector<std::pair<std::uint64_t, std::string>>& data) {
     amount_data_ = data.size();
 
@@ -20,14 +19,14 @@ void GetDataResponse::setData(
     }
 }
 
-std::size_t GetDataResponse::getAmountData() const {
+std::size_t protocol::response::GetDataResponse::getAmountData() const {
     return amount_data_;
 }
 
-std::vector<std::uint64_t> GetDataResponse::getDataIds() const {
+std::vector<std::uint64_t> protocol::response::GetDataResponse::getDataIds() const {
     return ids_;
 }
 
-std::vector<std::string> GetDataResponse::getData() const {
+std::vector<std::string> protocol::response::GetDataResponse::getData() const {
     return data_;
 }
